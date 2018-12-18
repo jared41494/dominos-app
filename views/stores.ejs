@@ -1,0 +1,17 @@
+<% if (Object.keys(data.Stores).length != 0) { %>
+
+	<% data.Stores.forEach((val) => { %>
+		<div class="store" onclick="GetMenu(this)">
+			<span id="id" class="id"><%= val.StoreID %></span>
+			<span class="phone"><%= val.Phone %></span>
+			<span class="address"><%= val.AddressDescription %></span>
+			<span class="hours"><%= val.HoursDescription %></span>
+		</div>
+	<% }); %>
+	
+<% } else { %>
+
+	<p>No Stores Found!</p>
+
+<% } %>
+

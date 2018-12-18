@@ -1,0 +1,19 @@
+{
+  "name": "mydominosorder",
+  "version": "1.0.0",
+  "description": "order my favorite dominos order",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jared Rummell",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dominos": "^2.1.1",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "joi": "^14.3.0",
+    "pizzapi": "0.0.8"
+  }
+}

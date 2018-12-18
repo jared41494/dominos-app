@@ -1,0 +1,37 @@
+<% if (Object.keys(data.Items).length != 0) { %>
+	<h2>Menu</h2>
+	<div class="table-responsive">
+		<table class="table">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Code</th>
+					<th>Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% data.Items.forEach((val) => { %>
+					<% for (let k in val) { %>
+						<tr>
+							<td>
+								<input type="checkbox" name="item[]" value="<%= val[k] %>" />
+							</td>
+							<td>
+								<span class="code"><%= val[k] %></span>
+							</td>
+							<td>
+								<span class="name"><%= k %></span>
+							</td>
+						</tr>
+					<% } %>
+				<% }); %>
+			</tbody>
+		</table>
+	</div>
+
+<% } else { %>
+
+	<p>No Items Found!</p>
+
+<% } %>
+
