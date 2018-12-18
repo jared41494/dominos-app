@@ -9,6 +9,12 @@
 	<body>
 		<div id="app" class="container">
 			<h1 class="text-center">{{ title }}</h1>
+			<p>
+				Welcome to my Dominos Online Ordering application! This application utilizes NodeJS and a Dominos API on the backend and Vue.js and Bootstrap on the frontend to allow people to order some dominos quickly. 
+			</p>
+			<p>
+				Currently, the application is in development mode; in other words, your order will be validated but will NOT go to Dominos for an order.
+			</p>
 			<form name="placeOrder" id="placeOrder" method="post" action="/" @submit="SubmitOrder" novalidate="true">
 				<input type="hidden" name="storeId" v-model="storeId" />
 				<div class="row" v-if="formErrors.length > 0">
