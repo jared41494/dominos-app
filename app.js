@@ -1,5 +1,5 @@
-//const dominos = require('dominos'); // Prod
-const dominos = require('pizzapi'); // test
+const dominos = require('dominos'); // Prod
+//const dominos = require('pizzapi'); // test
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -92,31 +92,31 @@ app.post('/Order', (req, res) => {
 				order.addItem(new dominos.Item({code: val, options: [], quantity: 1}));
 			});
 
-			order.validate((result) => {
-				if (result.success) {
-					console.log("Valid Order!");
-					//res.send({success: "Successfully Ordered!"});
+			order.validate((response1) => {
+				if (response1.success) {
+					order.price((response2) => {
+						/* Prod => this will place the order */
+						/*let cardInfo = new order.PaymentObject();
+						cardInfo.Amount = order.Amounts.Customer;
+						cardInfo.Number = value.creditCardNumber;
+						cardInfo.CardType = order.validateCC(value.creditCardNumber);
+						cardInfo.Expiration = value.expirationDate;
+						cardInfo.SecurityCode = value.securityCode;
+						cardInfo.PostalCode = value.postalCode;
+						order.Payments.push(cardInfo);
 
+						order.place((response3) => {
+							console.log("Ordered!");
+							res.send({success: "Successfully Ordered!"});
+						});*/
+					});
 				}
 				else {
 					console.log("Invalid Order!");
-					//res.send({error: "Invalid Order!"});
-
+					res.send({error: "Invalid Order!"});
 				}
 			});
 
-			/*order.place(function (response) {
-				console.log(response);
-			});*/
-
-			/*order.price((res) => {
-				//console.log(res);
-				console.log(res.result.Order.Amounts);
-				console.log(res.result.Order.AmountsBreakdown);
-			});*/
-
-
-			//res.send({success: "Successfully ordered!"});
 		}
 	});
 
