@@ -7,7 +7,7 @@ Vue.component('intro', {
 			Welcome to my Dominos Online Ordering application! This application utilizes NodeJS and a Dominos API on the backend and Vue.js and Bootstrap on the frontend to allow people to order some dominos quickly. 
 		</p>
 		<p>
-			Currently, the application is in development mode; in other words, your order will be validated but will NOT go to Dominos for an order.
+			This application is <span class="uppercase">Live</span>!
 		</p>
 	</div>
 `,
@@ -30,7 +30,7 @@ Vue.component('customer-info-form', {
 		}
 	},
 	template: `
-	<form name="placeOrder" id="placeOrder" method="post" action="/" @submit="SubmitOrder" v-if="store && orderitems.length > 0" novalidate="true">
+	<form name="placeOrder" id="placeOrder" method="post" action="/" @submit="SubmitOrder" v-if="store && orderitems.length > 0">
 		<div class="row" v-if="formErrors.length > 0">
 			<div class="col">
 				<p class="text-danger">
@@ -43,63 +43,63 @@ Vue.component('customer-info-form', {
 				<h2>Address Information</h2>
 				<div class="form-group">
 					<label for="street">Street Address</label>
-					<input class="form-control" type="text" name="street" v-model="street" required="required" maxlength="150" placeholder="1200 Fake Lane" />
+					<input class="form-control" type="text" v-model="Customer.address.Street" required="required" maxlength="150" placeholder="1200 Fake Lane" />
 				</div>
 				<div class="form-group">
 					<label for="city">City</label>
-					<input class="form-control" type="text" name="city" v-model="city" required="required" maxlength="75" placeholder="Fake" />
+					<input class="form-control" type="text" v-model="Customer.address.City" required="required" maxlength="75" placeholder="Fake" />
 				</div>
 				<div class="form-group">
 					<label for="region">State</label>
-					<input class="form-control" type="text" name="region" v-model="region" required="required" maxlength="2" placeholder="AA" />
+					<input class="form-control" type="text" v-model="Customer.address.Region" required="required" maxlength="2" placeholder="AA" />
 				</div>
 				<div class="form-group">
 					<label for="postalCode">Zip</label>
-					<input class="form-control" type="text" name="postalCode" v-model="postalCode" required="required" maxlength="5" placeholder="55555" />
+					<input class="form-control" type="text" v-model="Customer.address.PostalCode" required="required" maxlength="5" placeholder="55555" />
 				</div>
 			</div>
 			<div class="col">
 				<h2>Customer Information</h2>
 				<div class="form-group">
 					<label for="firstName">First Name</label>
-					<input class="form-control" type="text" name="firstName" v-model="firstName" required="required" maxlength="75" placeholder="John" />
+					<input class="form-control" type="text" v-model="Customer.firstName" required="required" maxlength="75" placeholder="John" />
 				</div>
 				<div class="form-group">
 					<label for="lastName">Last Name</label>
-					<input class="form-control" type="text" name="lastName" v-model="lastName" required="required" maxlength="150" placeholder="Smith" />
+					<input class="form-control" type="text" v-model="Customer.lastName" required="required" maxlength="150" placeholder="Smith" />
 				</div>
 				<div class="form-group">
 					<label for="phone">Phone</label>
-					<input class="form-control" type="phone" name="phone" v-model="phone" required="required" maxlength="12" placeholder="555-555-5555" />
+					<input class="form-control" type="phone" v-model="Customer.phone" required="required" maxlength="10" placeholder="5555555555" />
 				</div>
 				<div class="form-group">
 					<label for="email">Email</label>
-					<input class="form-control" type="email" name="email" v-model="email" required="required" maxlength="75" placeholder="john@smith.com" />
+					<input class="form-control" type="email" v-model="Customer.email" required="required" maxlength="75" placeholder="john@smith.com" />
 				</div>
 			</div>
 			<div class="col">
 				<h2>Credit Card Information</h2>
 				<div class="form-group">
 					<label for="creditCardNumber">Card Number</label>
-					<input class="form-control" type="text" name="creditCardNumber" v-model="creditCardNumber" required="required" maxlength="16" placeholder="0000000000000000" />
+					<input class="form-control" type="text" v-model="cardInfo.Number" required="required" maxlength="16" placeholder="0000000000000000" />
 				</div>
 				<div class="form-group">
 					<label for="expirationDate">Expiration Date</label>
-					<input class="form-control" type="text" name="expirationDate" v-model="expirationDate" required="required" maxlength="4" placeholder="1111" />
+					<input class="form-control" type="text" v-model="cardInfo.Expiration" required="required" maxlength="4" placeholder="1111" />
 				</div>
 				<div class="form-group">
 					<label for="securityCode">Secuirty Code</label>
-					<input class="form-control" type="text" name="securityCode" v-model="securityCode" required="required" maxlength="3" placeholder="000" />
+					<input class="form-control" type="text" v-model="cardInfo.SecurityCode" required="required" maxlength="3" placeholder="000" />
 				</div>
 				<div class="form-group">
 					<label for="billingZip">Billing Zip</label>
-					<input class="form-control" type="text" name="billingZip" v-model="billingZip" required="required" maxlength="5" placeholder="55555" />
+					<input class="form-control" type="text" v-model="cardInfo.PostalCode" required="required" maxlength="5" placeholder="55555" />
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-12">
-				<input class="btn btn-primary" type="submit" value="Place Order" />
+				<input class="btn btn-primary" type="submit" value="Place Order" v-if="!orderComplete" />
 			</div>
 		</div>
 	</form>
@@ -107,53 +107,57 @@ Vue.component('customer-info-form', {
 	data() {
 		return {
 			formErrors: [],
-			street: "",
-			city: "",
-			postalCode: "",
-			region: "",
-			firstName: "",
-			lastName: "",
-			phone: "",
-			email: "",
-			creditCardNumber: "",
-			expirationDate: "",
-			securityCode: "",
-			billingZip: ""
+			Customer: {
+				firstName: "",
+				lastName: "",
+				phone: "",
+				email: "",
+				address: {
+					Street: "",
+					City: "",
+					PostalCode: "",
+					Region: ""
+				}
+			},
+			cardInfo: {
+				Number: "",
+				Expiration: "",
+				SecurityCode: "",
+				PostalCode: ""
+			},
+			orderComplete: false
 		}
 	},
 	watch: {
-		postalCode(newVal) { this.postalCode = this.NumbersOnly(newVal); },
-		creditCardNumber(newVal) { this.creditCardNumber = this.NumbersOnly(newVal); },
-		expirationDate(newVal) { this.expirationDate = this.NumbersOnly(newVal); },
-		securityCode(newVal) { this.securityCode = this.NumbersOnly(newVal); },
-		billingZip(newVal) { this.billingZip = this.NumbersOnly(newVal); },
-		region(newVal) { this.region = newVal.toUpperCase(); },
-		phone(newVal, oldVal) {
-			let newValLen = newVal.length;
-			let char = newVal.slice(newValLen - 1, newValLen);
-
-			if (newValLen > oldVal.length) {
-				if (char.match(/[0-9]/g)) {
-					if (newValLen === 4 || newValLen === 8) {
-						this.phone = newVal.slice(0, newValLen - 1) + "-" + char;
-					}
-				}
-				else {
-					this.phone = oldVal;
-				}
-			}
+		Customer: {
+			handler(newVal) {
+				this.Customer.phone = this.NumbersOnly(newVal.phone);
+				this.Customer.address.PostalCode = this.NumbersOnly(newVal.address.PostalCode);
+				this.Customer.address.Region = newVal.address.Region.toUpperCase();
+			},
+			deep: true
+		},
+		cardInfo: {
+			handler(newVal) {
+				this.cardInfo.Number = this.NumbersOnly(newVal.Number);
+				this.cardInfo.Expiration = this.NumbersOnly(newVal.Expiration);
+				this.cardInfo.SecurityCode = this.NumbersOnly(newVal.SecurityCode);
+				this.cardInfo.PostalCode = this.NumbersOnly(newVal.PostalCode);
+			},
+			deep: true
 		}
 	},
 	methods: {
 		NumbersOnly(value) {
+			if (!value) return '';
 			return value.replace(/[^0-9]/g, '');
 		},
 		CheckOrder() {
 			this.formErrors = [];
 
-			if (!this.email.match(/\w+@\w+\.\w{3,4}/gi)) { this.formErrors.push("Email is invalid!\n"); }
+			if (!this.Customer.email.match(/\w+@\w+\.\w{3,4}/gi)) { this.formErrors.push("Email is invalid!\n"); }
 
-			if (!this.phone.match(/\d{3}-\d{3}-\d{4}/gi)) { this.formErrors.push("Phone is invalid!\n"); }
+			if (!this.Customer.phone.match(/^\d{10}$/gi)) { this.formErrors.push("Phone is invalid!\n"); }
 
 			if (this.formErrors.length > 0) { return false; } 
 
@@ -163,30 +167,20 @@ Vue.component('customer-info-form', {
 			e.preventDefault();
 			if (this.CheckOrder()) {
 				axios.post('/Order', {
-					storeId: this.storeId,
-					orderItems: this.orderItems,
-					street: this.street,
-					region: this.region,
-					city: this.city,
-					postalCode: this.postalCode,
-					firstName: this.firstName,
-					lastName: this.lastName,
-					phone: this.phone,
-					email: this.email,
-					creditCardNumber: this.creditCardNumber,
-					expirationDate: this.expirationDate,
-					securityCode: this.securityCode,
-					billingZip: this.billingZip
+					storeId: this.store,
+					orderItems: this.orderitems,
+					Customer: this.Customer,
+					cardInfo: this.cardInfo
 				}).then((res) => {
-					console.log(res);
 					if (res.data.hasOwnProperty("isJoi")) {
-						alert(res.data.details["message"]);
+						alert(res.data.details[0]["message"]);
+					} else if (res.data.hasOwnProperty("error")) {
+						alert(res.data.error);
 					}
 					else {
-						// successful order
-
+						this.orderComplete = true;
+						alert(res.data.success);
 					}
-					
 				}).catch((err) => {
 					console.log(err);
 				});
@@ -213,7 +207,7 @@ Vue.component('store-menu', {
 							<div class="col">
 								<h3>Your Order</h3>
 								<div class="form-group form-check" v-for="item in displayOrderItems">
-									<input type="checkbox" name="orderItems[]" v-model="orderItems" :value="item.code" @change="OrderChange" />
+									<input type="checkbox" name="orderItems[]" v-model="orderItems" :value="item.code" />
 									<label class="form-check-label">{{ item.code }} - {{ item.name }}</label>
 								</div>
 							</div>
@@ -234,7 +228,7 @@ Vue.component('store-menu', {
 							</thead>
 							<tbody>
 								<tr v-for="item in filteredMenuItems">
-									<td><input type="checkbox" name="orderItems[]" v-model="orderItems" :value="item.code" @change="OrderChange" /></td>
+									<td><input type="checkbox" name="orderItems[]" v-model="orderItems" :value="item.code" /></td>
 									<td>{{ item.code }}</td>
 									<td>{{ item.name }}</td>
 								</tr>
@@ -299,13 +293,21 @@ Vue.component('store-menu', {
 			});
 		}
 	},
+	watch: {
+		storeId(newVal, oldVal) {
+			this.$emit('update-store', this.storeId);
+		},
+		orderItems(newVal, oldVal) {
+			this.$emit('update-order', this.orderItems);
+		}
+	},
+
 	methods: {
 		Initialize() {
 			this.storeId = "",
 			this.orderItems = [],
 			this.menuItems = [],
-			this.OrderChange();
-			this.StoreChange();
+			this.searchFilter = ""
 		},
 		GetStores() {
 			if (this.store.length === 0) this.Initialize();
@@ -318,18 +320,11 @@ Vue.component('store-menu', {
 		GetMenu(storeId, address) {
 			this.storeId = storeId;
 			this.store = address;
-			this.StoreChange();
 			axios.post('/Menu', {storeId : this.storeId}).then((res) => {
 				this.menuItems = res.data;
 			}).catch((err) => {
 				console.log(err);
 			});
-		},
-		StoreChange() {
-			this.$emit('update-store', this.storeId);
-		},
-		OrderChange() {
-			this.$emit('update-order', this.orderItems);
 		}
 	}
 });
@@ -340,7 +335,7 @@ let app = new Vue({
 	data() {
 		return {
 			store: "",
-			items: [],
+			items: []
 		}
 	},
 	methods: {

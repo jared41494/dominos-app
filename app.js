@@ -61,21 +61,28 @@ app.post('/Menu', (req, res) => {
 });
 
 app.post('/Order', (req, res) => {
+	
 	const schema = joi.object().keys({
 		storeId: joi.string().trim().required(),
 		orderItems: joi.array().min(1),
-		street: joi.string().trim().required(),
-		region: joi.string().trim().required().length(2),
-		city: joi.string().trim().required(),
-		postalCode: joi.string().trim().required().length(5),
-		firstName: joi.string().trim().required(),
-		lastName: joi.string().trim().required(),
-		email: joi.string().trim().email().required(),
-		phone: joi.string().trim().regex(/\d{3}-\d{3}-\d{4}/).required(),
-		creditCardNumber: joi.string().trim().creditCard().required(),
-		securityCode: joi.string().trim().required().length(3),
-		billingZip: joi.string().trim().required().length(5),
-		expirationDate: joi.string().trim().required().length(4),
+		Customer: joi.object().keys({
+			address: joi.object().keys({
+				Street: joi.string().trim().required(),
+				Region: joi.string().trim().required().length(2),
+				City: joi.string().trim().required(),
+				PostalCode: joi.string().trim().required().length(5)
+			}),
+			firstName: joi.string().trim().required(),
+			lastName: joi.string().trim().required(),
+			email: joi.string().trim().email().required(),
+			phone: joi.string().trim().regex(/^\d{10}$/).required()
+		}),
+		cardInfo: joi.object().keys({
+			Number: joi.string().trim().creditCard().required(),
+			SecurityCode: joi.string().trim().required().length(3),
+			PostalCode: joi.string().trim().required().length(5),
+			Expiration: joi.string().trim().required().length(4)
+		})
 	});
 
 	joi.validate(req.body, schema, (err, value) => {
@@ -84,8 +91,7 @@ app.post('/Order', (req, res) => {
 		}
 		else {
 			// order some dominos
-			let address = new dominos.Address({Street: value.street, City: value.city, Region: value.region, PostalCode: value.postalCode});
-			let customer = new dominos.Customer({address: address, firstName: value.firstName, lastName: value.lastName, phone: value.phone, email: value.email});
+			let customer = new dominos.Customer(value.Customer);
 			let order = new dominos.Order({customer: customer, storeID: value.storeId, deliveryMethod: 'Delivery'});
 
 			value.orderItems.forEach((val) => {
@@ -95,20 +101,21 @@ app.post('/Order', (req, res) => {
 			order.validate((response1) => {
 				if (response1.success) {
 					order.price((response2) => {
-						/* Prod => this will place the order */
-						/*let cardInfo = new order.PaymentObject();
+						
+						let cardInfo = new order.PaymentObject();
 						cardInfo.Amount = order.Amounts.Customer;
-						cardInfo.Number = value.creditCardNumber;
-						cardInfo.CardType = order.validateCC(value.creditCardNumber);
-						cardInfo.Expiration = value.expirationDate;
-						cardInfo.SecurityCode = value.securityCode;
-						cardInfo.PostalCode = value.postalCode;
+						cardInfo.Number = value.cardInfo.Number;
+						cardInfo.CardType = order.validateCC(value.cardInfo.Number);
+						cardInfo.Expiration = value.cardInfo.Expiration;
+						cardInfo.SecurityCode = value.cardInfo.SecurityCode;
+						cardInfo.PostalCode = value.cardInfo.PostalCode;
 						order.Payments.push(cardInfo);
 
 						order.place((response3) => {
 							console.log("Ordered!");
 							res.send({success: "Successfully Ordered!"});
-						});*/
+						});
+
 					});
 				}
 				else {
